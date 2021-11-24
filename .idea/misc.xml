@@ -3,11 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/drawable/ic_cadeado_cinza_24.xml" value="0.3828125" />
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/drawable/ic_email_cinza_24.xml" value="0.3828125" />
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/drawable/ic_pessoa_cinza_24.xml" value="0.3828125" />
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/activity_cadastro.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/activity_login.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/intro_1.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/intro_2.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/intro_3.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/intro_4.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/lorra/AndroidStudioProjects/Organizze/app/src/main/res/layout/intro_cadastro.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
