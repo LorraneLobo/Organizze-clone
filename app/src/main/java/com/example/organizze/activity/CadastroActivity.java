@@ -58,6 +58,7 @@ public class CadastroActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()){
                         Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso!", Toast.LENGTH_SHORT).show();
+                        finish();
                     }else {
 
                         String execao = "";

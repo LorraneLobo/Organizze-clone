@@ -2,6 +2,7 @@ package com.example.organizze.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,8 +31,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        campoEmail = findViewById(R.id.editEmail);
-        campoSenha = findViewById(R.id.editSenha);
+        campoEmail = findViewById(R.id.editEmailLogin);
+        campoSenha = findViewById(R.id.editSenhaLogin);
         botaoEntrar = findViewById(R.id.btnEntrar);
 
         botaoEntrar.setOnClickListener(v -> {
@@ -59,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                 if (task.isSuccessful()){
 
-                    Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_SHORT).show();
+                    abrirTelaPrincipal();
 
                 }else {
                     String execao = "";
@@ -78,5 +79,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
         });
 
+    }
+
+    private void abrirTelaPrincipal(){
+        startActivity(new Intent(this, PrincipalActivity.class));
+        finish();
     }
 }
