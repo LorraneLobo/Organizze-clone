@@ -1,5 +1,6 @@
 package com.example.organizze.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.organizze.databinding.ActivityPrincipalBinding;
@@ -43,11 +44,11 @@ public class PrincipalActivity extends AppCompatActivity {
     }
 
     public void adicionarDespesa(View v){
-
+        startActivity(new Intent(this, DespesaActivity.class));
     }
 
     public void adicionarReceita(View v){
-
+        startActivity(new Intent(this, ReceitaActivity.class));
     }
 
 }

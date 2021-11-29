@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.organizze.R;
 import com.example.organizze.config.ConfiguracaoFirebase;
+import com.example.organizze.helper.Base64Custom;
 import com.example.organizze.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -58,6 +59,10 @@ public class CadastroActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()){
                         Toast.makeText(CadastroActivity.this, "Usuário criado com sucesso!", Toast.LENGTH_SHORT).show();
+
+                        String idUsuario = Base64Custom.codificarBase64(usuario.getEmail());
+                        usuario.setIdUsuario(idUsuario);
+                        usuario.salvar();
                         finish();
                     }else {
 
