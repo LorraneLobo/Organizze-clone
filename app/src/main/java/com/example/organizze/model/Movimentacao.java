@@ -2,6 +2,7 @@ package com.example.organizze.model;
 
 import com.example.organizze.config.ConfiguracaoFirebase;
 import com.example.organizze.helper.Base64Custom;
+import com.example.organizze.helper.DateCustom;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
@@ -16,7 +17,7 @@ public class Movimentacao {
     public Movimentacao() {
     }
 
-    public void salvar(){
+    public void salvar(String dataEscolhida){
 
         FirebaseAuth auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
         String idUsuario = Base64Custom.codificarBase64(auth.getCurrentUser().getEmail());
@@ -24,7 +25,7 @@ public class Movimentacao {
         DatabaseReference firebase = ConfiguracaoFirebase.getFirebaseDatabase();
         firebase.child("movimentacao")
                 .child(idUsuario)
-                .child("022018")
+                .child(DateCustom.mesAnoDataEscolhida(dataEscolhida))
                 .push()
                 .setValue(this);
     }
