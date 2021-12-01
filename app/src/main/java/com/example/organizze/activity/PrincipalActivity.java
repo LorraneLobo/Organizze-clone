@@ -3,6 +3,7 @@ package com.example.organizze.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.organizze.config.ConfiguracaoFirebase;
 import com.example.organizze.databinding.ActivityPrincipalBinding;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 
 
 import com.example.organizze.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -29,6 +33,8 @@ public class PrincipalActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityPrincipalBinding binding;
+    private FirebaseAuth auth;
+
     private TextView textoSaldo, textoSaudacao;
 
     MaterialCalendarView calendarView;
@@ -40,6 +46,7 @@ public class PrincipalActivity extends AppCompatActivity {
         binding = ActivityPrincipalBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+        binding.toolbar.setTitle("Organizze");
 
         textoSaldo = binding.content.textSaldo;
         textoSaudacao = binding.content.textSaudacao;
@@ -51,6 +58,26 @@ public class PrincipalActivity extends AppCompatActivity {
             Log.i("wsd", "Mês: " + date);
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menuSair:
+                auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                auth.signOut();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void adicionarDespesa(View v){
