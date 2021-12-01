@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -28,7 +29,9 @@ public class PrincipalActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityPrincipalBinding binding;
+    private TextView textoSaldo, textoSaudacao;
 
+    MaterialCalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,11 @@ public class PrincipalActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
-        MaterialCalendarView calendarView = binding.content.calendarView;
+        textoSaldo = binding.content.textSaldo;
+        textoSaudacao = binding.content.textSaudacao;
+
+        calendarView = binding.content.calendarView;
+        configuraCalendarView();
 
         calendarView.setOnMonthChangedListener((widget, date) -> {
             Log.i("wsd", "Mês: " + date);
@@ -52,6 +59,11 @@ public class PrincipalActivity extends AppCompatActivity {
 
     public void adicionarReceita(View v){
         startActivity(new Intent(this, ReceitaActivity.class));
+    }
+
+    public void configuraCalendarView(){
+        CharSequence meses[] = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+        calendarView.setTitleMonths(meses);
     }
 
 }
