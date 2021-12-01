@@ -46,7 +46,8 @@ public class PrincipalActivity extends AppCompatActivity {
         binding = ActivityPrincipalBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
-        binding.toolbar.setTitle("Organizze");
+        getSupportActionBar().setTitle(" ");
+        //binding.toolbar.setTitle("Organizze");
 
         textoSaldo = binding.content.textSaldo;
         textoSaudacao = binding.content.textSaudacao;
