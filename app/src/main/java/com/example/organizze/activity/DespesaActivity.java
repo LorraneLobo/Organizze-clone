@@ -40,7 +40,7 @@ public class DespesaActivity extends AppCompatActivity {
         campoData = findViewById(R.id.editData);
         campoCategoria = findViewById(R.id.editCategoria);
         campoDescricao = findViewById(R.id.editDescricao);
-        campoValor = findViewById(R.id.editValor);
+        campoValor = findViewById(R.id.editValorDespesa);
 
         //Exibe a data atual
         campoData.setText(DateCustom.dataAtual());
@@ -72,9 +72,9 @@ public class DespesaActivity extends AppCompatActivity {
 
     private boolean validarCamposDespesa() {
         String textoValor = campoValor.getText().toString();
-        String textoData = campoValor.getText().toString();
-        String textoCategoria = campoValor.getText().toString();
-        String textoDescricao = campoValor.getText().toString();
+        String textoData = campoData.getText().toString();
+        String textoCategoria = campoCategoria.getText().toString();
+        String textoDescricao = campoDescricao.getText().toString();
 
         if (!textoValor.isEmpty() || !textoData.isEmpty() || !textoCategoria.isEmpty() || !textoDescricao.isEmpty()) {
             return true;
