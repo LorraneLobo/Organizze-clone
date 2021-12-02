@@ -66,6 +66,8 @@ public class DespesaActivity extends AppCompatActivity {
             atualizarDespeza(despesaAtualizada);
 
             movimentacao.salvar(data);
+
+            finish();
         }
 
     }
