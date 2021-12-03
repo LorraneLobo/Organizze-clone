@@ -12,10 +12,12 @@
         <activity
             android:name=".activity.ReceitaActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/receitaTheme.Organizze"/>
         <activity
             android:name=".activity.DespesaActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/despesaTheme.Organizze"/>
         <activity
             android:name=".activity.PrincipalActivity"

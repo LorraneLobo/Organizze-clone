@@ -28,7 +28,7 @@
             android:inputType="numberDecimal"
             android:textAlignment="textEnd"
             android:textColor="@color/white"
-            android:textSize="30sp" />
+            android:textSize="30sp"/>
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -95,6 +95,8 @@
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:onClick="salvarReceita"
+        app:tint="@color/white"
+        app:backgroundTint="@color/colorAccentReceita"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
