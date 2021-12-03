@@ -48,11 +48,13 @@ public class PrincipalActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityPrincipalBinding binding;
     private ValueEventListener valueEventListenerUsuario;
+    private ValueEventListener valueEventListenerMovimentacoes;
     private AdapterMovimentacao adapterMovimentacao;
 
     private FirebaseAuth auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
     private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
     private DatabaseReference usuarioRef;
+    private DatabaseReference movimentacaoRef;
 
     private TextView textoSaldo, textoSaudacao;
     private MaterialCalendarView calendarView;
@@ -60,6 +62,7 @@ public class PrincipalActivity extends AppCompatActivity {
     private Double despesaTotal = 0.00;
     private Double receitaotal = 0.00;
     private Double resumoUsuario = 0.00;
+    private String mesAnoSelecionado;
 
     private List<Movimentacao> movimentacoes = new ArrayList<>();
 
@@ -90,10 +93,33 @@ public class PrincipalActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        recuperarResumo();
+    public void recuperarMovimentacoes(){
+
+        String emailUsuario = auth.getCurrentUser().getEmail();
+        String idUsuario = Base64Custom.codificarBase64(emailUsuario);
+        movimentacaoRef = firebaseRef.child("movimentacao")
+                .child(idUsuario)
+                .child(mesAnoSelecionado);
+
+        valueEventListenerMovimentacoes = movimentacaoRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                movimentacoes.clear();
+                for (DataSnapshot dados : snapshot.getChildren()) {
+
+                    Movimentacao movimentacao = dados.getValue(Movimentacao.class);
+                    movimentacoes.add(movimentacao);
+                }
+
+                adapterMovimentacao.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     public void recuperarResumo(){
@@ -121,7 +147,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.i("firebase", "erro: " + error.getMessage());
             }
         });
 
@@ -157,11 +183,31 @@ public class PrincipalActivity extends AppCompatActivity {
     public void configuraCalendarView(){
         CharSequence[] meses = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
         calendarView.setTitleMonths(meses);
+
+        CalendarDay dataAtual = calendarView.getCurrentDate();
+        String mesAtual = String.format("%02d", dataAtual.getMonth());
+        mesAnoSelecionado =(mesAtual + "" + dataAtual.getYear());
+
+        calendarView.setOnMonthChangedListener((widget, date) -> {
+            String mesSelecionado2 = String.format("%02d", date.getMonth());
+            mesAnoSelecionado = (mesSelecionado2 + "" + date.getYear());
+
+            movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
+            recuperarMovimentacoes();
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recuperarResumo();
+        recuperarMovimentacoes();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         usuarioRef.removeEventListener(valueEventListenerUsuario);
+        movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
     }
 }
