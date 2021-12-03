@@ -43,7 +43,9 @@ public class PrincipalActivity extends AppCompatActivity {
     private ActivityPrincipalBinding binding;
 
     private FirebaseAuth auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
-     private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
+    private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
+    private DatabaseReference usuarioRef;
+    private ValueEventListener valueEventListenerUsuario;
 
     private TextView textoSaldo, textoSaudacao;
     private Double despesaTotal = 0.00;
@@ -67,17 +69,22 @@ public class PrincipalActivity extends AppCompatActivity {
 
         calendarView = binding.content.calendarView;
         configuraCalendarView();
-        recuperarResumo();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recuperarResumo();
     }
 
     public void recuperarResumo(){
 
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
-        DatabaseReference usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
+        usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
 
-        usuarioRef.addValueEventListener(new ValueEventListener() {
+        valueEventListenerUsuario = usuarioRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -134,4 +141,9 @@ public class PrincipalActivity extends AppCompatActivity {
         calendarView.setTitleMonths(meses);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        usuarioRef.removeEventListener(valueEventListenerUsuario);
+    }
 }
