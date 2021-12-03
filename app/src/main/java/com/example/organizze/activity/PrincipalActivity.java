@@ -1,6 +1,5 @@
 package com.example.organizze.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,7 +9,6 @@ import com.example.organizze.databinding.ActivityPrincipalBinding;
 import com.example.organizze.helper.Base64Custom;
 import com.example.organizze.model.Movimentacao;
 import com.example.organizze.model.Usuario;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,10 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,8 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
-import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -64,7 +57,7 @@ public class PrincipalActivity extends AppCompatActivity {
     private Movimentacao movimentacao;
     private RecyclerView recyclerView;
     private Double despesaTotal = 0.00;
-    private Double receitaotal = 0.00;
+    private Double receitaTotal = 0.00;
     private Double resumoUsuario = 0.00;
     private String mesAnoSelecionado;
 
@@ -143,6 +136,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
             movimentacaoRef.child(movimentacao.getKey()).removeValue();
             adapterMovimentacao.notifyItemRemoved(position);
+            atualizarSaldo();
         });
 
         alertDialog.setNegativeButton("Cancelar", (dialog, which) -> {
@@ -151,6 +145,22 @@ public class PrincipalActivity extends AppCompatActivity {
 
         AlertDialog alert = alertDialog.create();
         alert.show();
+    }
+
+    public void atualizarSaldo(){
+
+        String emailUsuario = auth.getCurrentUser().getEmail();
+        String idUsuario = Base64Custom.codificarBase64(emailUsuario);
+        usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
+
+        if (movimentacao.getTipo().equals("r")){
+            receitaTotal = receitaTotal - movimentacao.getValor();
+            usuarioRef.child("receitaTotal").setValue(receitaTotal);
+        }
+        if (movimentacao.getTipo().equals("d")){
+            despesaTotal = despesaTotal - movimentacao.getValor();
+            usuarioRef.child("despesaTotal").setValue(despesaTotal);
+        }
     }
 
     public void recuperarMovimentacoes(){
@@ -196,8 +206,8 @@ public class PrincipalActivity extends AppCompatActivity {
                 Usuario usuario = snapshot.getValue(Usuario.class);
 
                 despesaTotal = usuario.getDespesaTotal();
-                receitaotal = usuario.getReceitaTotal();
-                resumoUsuario = receitaotal - despesaTotal;
+                receitaTotal = usuario.getReceitaTotal();
+                resumoUsuario = receitaTotal - despesaTotal;
 
                 DecimalFormat decimalFormat = new DecimalFormat("0.##");
                 String resultadoFormatado = decimalFormat.format(resumoUsuario);
