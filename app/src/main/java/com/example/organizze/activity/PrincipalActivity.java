@@ -3,9 +3,11 @@ package com.example.organizze.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.organizze.adapter.AdapterMovimentacao;
 import com.example.organizze.config.ConfiguracaoFirebase;
 import com.example.organizze.databinding.ActivityPrincipalBinding;
 import com.example.organizze.helper.Base64Custom;
+import com.example.organizze.model.Movimentacao;
 import com.example.organizze.model.Usuario;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -22,6 +24,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.organizze.R;
@@ -36,23 +40,28 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PrincipalActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityPrincipalBinding binding;
+    private ValueEventListener valueEventListenerUsuario;
+    private AdapterMovimentacao adapterMovimentacao;
 
     private FirebaseAuth auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
     private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
     private DatabaseReference usuarioRef;
-    private ValueEventListener valueEventListenerUsuario;
 
     private TextView textoSaldo, textoSaudacao;
+    private MaterialCalendarView calendarView;
+    private RecyclerView recyclerView;
     private Double despesaTotal = 0.00;
     private Double receitaotal = 0.00;
     private Double resumoUsuario = 0.00;
 
-    MaterialCalendarView calendarView;
+    private List<Movimentacao> movimentacoes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +71,22 @@ public class PrincipalActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(" ");
-        //binding.toolbar.setTitle("Organizze");
 
         textoSaldo = binding.content.textSaldo;
         textoSaudacao = binding.content.textSaudacao;
 
         calendarView = binding.content.calendarView;
+        recyclerView =  binding.content.recyclerMovimentos;
         configuraCalendarView();
+
+
+        //Configurar adapter
+        adapterMovimentacao = new AdapterMovimentacao(movimentacoes, this);
+
+        //Configurar RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapterMovimentacao);
 
     }
 
