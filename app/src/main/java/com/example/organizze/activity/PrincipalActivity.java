@@ -2,31 +2,27 @@ package com.example.organizze.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.example.organizze.adapter.AdapterMovimentacao;
-import com.example.organizze.config.ConfiguracaoFirebase;
-import com.example.organizze.databinding.ActivityPrincipalBinding;
-import com.example.organizze.helper.Base64Custom;
-import com.example.organizze.model.Movimentacao;
-import com.example.organizze.model.Usuario;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.organizze.R;
+import com.example.organizze.adapter.AdapterMovimentacao;
+import com.example.organizze.config.ConfiguracaoFirebase;
+import com.example.organizze.databinding.ActivityPrincipalBinding;
+import com.example.organizze.helper.Base64Custom;
+import com.example.organizze.model.Movimentacao;
+import com.example.organizze.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,9 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PrincipalActivity extends AppCompatActivity {
 
@@ -76,7 +73,7 @@ public class PrincipalActivity extends AppCompatActivity {
         textoSaudacao = binding.content.textSaudacao;
 
         calendarView = binding.content.calendarView;
-        recyclerView =  binding.content.recyclerMovimentos;
+        recyclerView = binding.content.recyclerMovimentos;
         configuraCalendarView();
         swipe();
 
@@ -90,7 +87,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
     }
 
-    public void swipe(){
+    public void swipe() {
 
         ItemTouchHelper.Callback itemTouch = new ItemTouchHelper.Callback() {
             @Override
@@ -115,7 +112,7 @@ public class PrincipalActivity extends AppCompatActivity {
         new ItemTouchHelper(itemTouch).attachToRecyclerView(recyclerView);
     }
 
-    public void excluirMovimentacao(RecyclerView.ViewHolder viewHolder){
+    public void excluirMovimentacao(RecyclerView.ViewHolder viewHolder) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
@@ -147,23 +144,23 @@ public class PrincipalActivity extends AppCompatActivity {
         alert.show();
     }
 
-    public void atualizarSaldo(){
+    public void atualizarSaldo() {
 
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
         usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
 
-        if (movimentacao.getTipo().equals("r")){
+        if (movimentacao.getTipo().equals("r")) {
             receitaTotal = receitaTotal - movimentacao.getValor();
             usuarioRef.child("receitaTotal").setValue(receitaTotal);
         }
-        if (movimentacao.getTipo().equals("d")){
+        if (movimentacao.getTipo().equals("d")) {
             despesaTotal = despesaTotal - movimentacao.getValor();
             usuarioRef.child("despesaTotal").setValue(despesaTotal);
         }
     }
 
-    public void recuperarMovimentacoes(){
+    public void recuperarMovimentacoes() {
 
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
@@ -193,7 +190,7 @@ public class PrincipalActivity extends AppCompatActivity {
         });
     }
 
-    public void recuperarResumo(){
+    public void recuperarResumo() {
 
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
@@ -209,11 +206,10 @@ public class PrincipalActivity extends AppCompatActivity {
                 receitaTotal = usuario.getReceitaTotal();
                 resumoUsuario = receitaTotal - despesaTotal;
 
-                DecimalFormat decimalFormat = new DecimalFormat("0.##");
-                String resultadoFormatado = decimalFormat.format(resumoUsuario);
+                String resultadoFormatado = NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(resumoUsuario);
 
                 textoSaudacao.setText("Olá, " + usuario.getNome());
-                textoSaldo.setText("R$ " + resultadoFormatado);
+                textoSaldo.setText(resultadoFormatado);
             }
 
             @Override
@@ -232,7 +228,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuSair:
                 auth.signOut();
                 startActivity(new Intent(this, MainActivity.class));
@@ -243,21 +239,21 @@ public class PrincipalActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void adicionarDespesa(View v){
+    public void adicionarDespesa(View v) {
         startActivity(new Intent(this, DespesaActivity.class));
     }
 
-    public void adicionarReceita(View v){
+    public void adicionarReceita(View v) {
         startActivity(new Intent(this, ReceitaActivity.class));
     }
 
-    public void configuraCalendarView(){
+    public void configuraCalendarView() {
         CharSequence[] meses = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
         calendarView.setTitleMonths(meses);
 
         CalendarDay dataAtual = calendarView.getCurrentDate();
         String mesAtual = String.format("%02d", dataAtual.getMonth());
-        mesAnoSelecionado =(mesAtual + "" + dataAtual.getYear());
+        mesAnoSelecionado = (mesAtual + "" + dataAtual.getYear());
 
         calendarView.setOnMonthChangedListener((widget, date) -> {
             String mesSelecionado2 = String.format("%02d", date.getMonth());

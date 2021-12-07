@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.organizze.R;
 import com.example.organizze.model.Movimentacao;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Jamilton Damasceno
@@ -38,15 +40,25 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Movimentacao movimentacao = movimentacoes.get(position);
 
-        holder.titulo.setText(movimentacao.getDescricao());
-        holder.valor.setText(String.valueOf(movimentacao.getValor()));
-        holder.categoria.setText(movimentacao.getCategoria());
-        holder.valor.setTextColor(context.getResources().getColor(R.color.colorAccentReceita));
+        boolean isDespesa = movimentacao.getTipo().equals("d");
 
-        if (movimentacao.getTipo() == "d" || movimentacao.getTipo().equals("d")) {
-            holder.valor.setTextColor(context.getResources().getColor(R.color.colorAccentDespesa));
-            holder.valor.setText("-" + movimentacao.getValor());
+        holder.titulo.setText(movimentacao.getDescricao());
+
+        double valorMovimentacao = movimentacao.getValor();
+        if (isDespesa)  {
+            valorMovimentacao = valorMovimentacao * -1;
         }
+
+        holder.valor.setText(NumberFormat.getCurrencyInstance(new Locale("pt", "BR")).format(valorMovimentacao));
+        holder.categoria.setText(movimentacao.getCategoria());
+
+        int cor = R.color.colorAccentReceita;
+        if (isDespesa) {
+            cor = R.color.colorAccentDespesa;
+        }
+
+        holder.valor.setTextColor(context.getResources().getColor(cor));
+
     }
 
 

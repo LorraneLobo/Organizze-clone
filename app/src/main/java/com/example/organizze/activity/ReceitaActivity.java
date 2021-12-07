@@ -12,8 +12,10 @@ import com.example.organizze.R;
 import com.example.organizze.config.ConfiguracaoFirebase;
 import com.example.organizze.helper.Base64Custom;
 import com.example.organizze.helper.DateCustom;
+import com.example.organizze.helper.MoneyTextWatcher;
 import com.example.organizze.model.Movimentacao;
 import com.example.organizze.model.Usuario;
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +23,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
 public class ReceitaActivity extends AppCompatActivity {
+
+    Locale mLocale = new Locale("pt", "BR");
 
     private TextInputEditText campoData, campoCategoria, campoDescricao;
     private EditText campoValor;
@@ -31,6 +41,7 @@ public class ReceitaActivity extends AppCompatActivity {
 
     private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
     private FirebaseAuth auth = ConfiguracaoFirebase.getFirebaseAutenticacao();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,8 @@ public class ReceitaActivity extends AppCompatActivity {
         campoDescricao = findViewById(R.id.editDescricaoReceita);
         campoValor = findViewById(R.id.editValorReceita);
 
+        campoValor.addTextChangedListener(new MoneyTextWatcher(campoValor, mLocale));
+
         //Exibe a data atual
         campoData.setText(DateCustom.dataAtual());
         recuperarReceitaTotal();
@@ -51,7 +64,12 @@ public class ReceitaActivity extends AppCompatActivity {
         if (validarCamposReceita()){
 
             String data = campoData.getText().toString();
-            Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
+            String valorFormatado = campoValor.getText().toString()
+                    .replaceAll("[%sR$\\s]", "")
+                    .replace(".",",")
+                    .replace(",",".");
+
+            Double valorRecuperado = Double.parseDouble(valorFormatado);
 
             movimentacao = new Movimentacao();
             movimentacao.setValor(valorRecuperado);
@@ -71,29 +89,22 @@ public class ReceitaActivity extends AppCompatActivity {
     }
 
     private boolean validarCamposReceita() {
-        String textoValor = campoValor.getText().toString();
-        String textoData = campoData.getText().toString();
-        String textoCategoria = campoCategoria.getText().toString();
-        String textoDescricao = campoDescricao.getText().toString();
+        List<EditText> editTextList = new ArrayList<>();
+        editTextList.add(campoValor);
+        editTextList.add(campoData);
+        editTextList.add(campoCategoria);
+        editTextList.add(campoDescricao);
 
-        if (!textoValor.isEmpty() && !textoData.isEmpty() && !textoCategoria.isEmpty() && !textoDescricao.isEmpty()) {
-            return true;
-        } else {
-            Toast.makeText(ReceitaActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
-            if (textoValor.isEmpty()){
-                campoValor.setError("Preencha o campo ");
+        boolean isValid = true;
+
+        for (EditText editText : editTextList) {
+            if (editText.getText().toString().isEmpty()) {
+                editText.setError("Preencha o campo");
+                isValid = false;
             }
-            if (textoData.isEmpty()){
-                campoData.setError("Preencha o campo ");
-            }
-            if (textoCategoria.isEmpty()){
-                campoCategoria.setError("Preencha o campo ");
-            }
-            if (textoDescricao.isEmpty()){
-                campoDescricao.setError("Preencha o campo ");
-            }
-            return false;
         }
+
+        return isValid;
     }
 
     public void recuperarReceitaTotal(){

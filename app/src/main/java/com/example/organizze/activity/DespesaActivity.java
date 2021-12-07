@@ -12,6 +12,7 @@ import com.example.organizze.R;
 import com.example.organizze.config.ConfiguracaoFirebase;
 import com.example.organizze.helper.Base64Custom;
 import com.example.organizze.helper.DateCustom;
+import com.example.organizze.helper.MoneyTextWatcher;
 import com.example.organizze.model.Movimentacao;
 import com.example.organizze.model.Usuario;
 import com.google.android.material.textfield.TextInputEditText;
@@ -21,7 +22,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class DespesaActivity extends AppCompatActivity {
+
+    Locale mLocale = new Locale("pt", "BR");
 
     private TextInputEditText campoData, campoCategoria, campoDescricao;
     private EditText campoValor;
@@ -42,6 +49,8 @@ public class DespesaActivity extends AppCompatActivity {
         campoDescricao = findViewById(R.id.editDescricao);
         campoValor = findViewById(R.id.editValorDespesa);
 
+        campoValor.addTextChangedListener(new MoneyTextWatcher(campoValor, mLocale));
+
         //Exibe a data atual
         campoData.setText(DateCustom.dataAtual());
         recuperarDespesaTotal();
@@ -51,7 +60,12 @@ public class DespesaActivity extends AppCompatActivity {
     public void salvarDespesa(View v){
             if (validarCamposDespesa()){
             String data = campoData.getText().toString();
-            Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
+
+            String valorFormatado = campoValor.getText().toString()
+                        .replaceAll("[%sR$\\s]", "")
+                        .replace(".",",")
+                        .replace(",",".");
+            Double valorRecuperado = Double.parseDouble(valorFormatado);
 
             movimentacao = new Movimentacao();
             movimentacao.setValor(valorRecuperado);
@@ -71,29 +85,22 @@ public class DespesaActivity extends AppCompatActivity {
     }
 
     private boolean validarCamposDespesa() {
-        String textoValor = campoValor.getText().toString();
-        String textoData = campoData.getText().toString();
-        String textoCategoria = campoCategoria.getText().toString();
-        String textoDescricao = campoDescricao.getText().toString();
+        List<EditText> editTextList = new ArrayList<>();
+        editTextList.add(campoValor);
+        editTextList.add(campoData);
+        editTextList.add(campoCategoria);
+        editTextList.add(campoDescricao);
 
-        if (!textoValor.isEmpty() && !textoData.isEmpty() && !textoCategoria.isEmpty() && !textoDescricao.isEmpty()) {
-            return true;
-        } else {
-            Toast.makeText(DespesaActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
-            if (textoValor.isEmpty()){
-                campoValor.setError("Preencha o campo ");
+        boolean isValid = true;
+
+        for (EditText editText : editTextList) {
+            if (editText.getText().toString().isEmpty()) {
+                editText.setError("Preencha o campo");
+                isValid = false;
             }
-            if (textoData.isEmpty()){
-                campoData.setError("Preencha o campo ");
-            }
-            if (textoCategoria.isEmpty()){
-                campoCategoria.setError("Preencha o campo ");
-            }
-            if (textoDescricao.isEmpty()){
-                campoDescricao.setError("Preencha o campo ");
-            }
-            return false;
         }
+
+        return isValid;
     }
 
     public void recuperarDespesaTotal(){
