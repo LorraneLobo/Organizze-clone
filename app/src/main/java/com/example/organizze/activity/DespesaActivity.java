@@ -81,16 +81,16 @@ public class DespesaActivity extends AppCompatActivity {
         } else {
             Toast.makeText(DespesaActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
             if (textoValor.isEmpty()){
-                campoValor.setError("Preencha o campo");
+                campoValor.setError("Preencha o campo ");
             }
             if (textoData.isEmpty()){
-                campoData.setError("Preencha o campo");
+                campoData.setError("Preencha o campo ");
             }
             if (textoCategoria.isEmpty()){
-                campoCategoria.setError("Preencha o campo");
+                campoCategoria.setError("Preencha o campo ");
             }
             if (textoDescricao.isEmpty()){
-                campoDescricao.setError("Preencha o campo");
+                campoDescricao.setError("Preencha o campo ");
             }
             return false;
         }
