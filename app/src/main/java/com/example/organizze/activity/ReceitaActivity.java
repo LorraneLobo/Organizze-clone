@@ -66,7 +66,7 @@ public class ReceitaActivity extends AppCompatActivity {
             String data = campoData.getText().toString();
             String valorFormatado = campoValor.getText().toString()
                     .replaceAll("[%sR$\\s]", "")
-                    .replace(".",",")
+                    .replace(".","")
                     .replace(",",".");
 
             Double valorRecuperado = Double.parseDouble(valorFormatado);

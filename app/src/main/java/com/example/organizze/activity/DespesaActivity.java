@@ -63,7 +63,7 @@ public class DespesaActivity extends AppCompatActivity {
 
             String valorFormatado = campoValor.getText().toString()
                         .replaceAll("[%sR$\\s]", "")
-                        .replace(".",",")
+                        .replace(".","")
                         .replace(",",".");
             Double valorRecuperado = Double.parseDouble(valorFormatado);
 
