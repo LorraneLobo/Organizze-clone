@@ -48,11 +48,11 @@ public class ReceitaActivity extends AppCompatActivity {
     }
 
     public void salvarReceita(View v){
-
-        String data = campoData.getText().toString();
-        Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
-
         if (validarCamposReceita()){
+
+            String data = campoData.getText().toString();
+            Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
+
             movimentacao = new Movimentacao();
             movimentacao.setValor(valorRecuperado);
             movimentacao.setCategoria(campoCategoria.getText().toString());
@@ -68,7 +68,6 @@ public class ReceitaActivity extends AppCompatActivity {
 
             finish();
         }
-
     }
 
     private boolean validarCamposReceita() {
@@ -77,16 +76,27 @@ public class ReceitaActivity extends AppCompatActivity {
         String textoCategoria = campoCategoria.getText().toString();
         String textoDescricao = campoDescricao.getText().toString();
 
-        if (!textoValor.isEmpty() || !textoData.isEmpty() || !textoCategoria.isEmpty() || !textoDescricao.isEmpty()) {
+        if (!textoValor.isEmpty() && !textoData.isEmpty() && !textoCategoria.isEmpty() && !textoDescricao.isEmpty()) {
             return true;
         } else {
-            Toast.makeText(ReceitaActivity.this, "Todos os campos devem estar preenchidos!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ReceitaActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+            if (textoValor.isEmpty()){
+                campoValor.setError("Preencha o campo");
+            }
+            if (textoData.isEmpty()){
+                campoData.setError("Preencha o campo");
+            }
+            if (textoCategoria.isEmpty()){
+                campoCategoria.setError("Preencha o campo");
+            }
+            if (textoDescricao.isEmpty()){
+                campoDescricao.setError("Preencha o campo");
+            }
             return false;
         }
     }
 
     public void recuperarReceitaTotal(){
-
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
         DatabaseReference usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
@@ -106,7 +116,6 @@ public class ReceitaActivity extends AppCompatActivity {
     }
 
     public void atualizarReceita(Double receita){
-
         String emailUsuario = auth.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
         DatabaseReference usuarioRef = firebaseRef.child("usuarios").child(idUsuario);

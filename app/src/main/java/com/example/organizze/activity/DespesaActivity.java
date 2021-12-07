@@ -49,11 +49,10 @@ public class DespesaActivity extends AppCompatActivity {
     }
 
     public void salvarDespesa(View v){
+            if (validarCamposDespesa()){
+            String data = campoData.getText().toString();
+            Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
 
-        String data = campoData.getText().toString();
-        Double valorRecuperado = Double.parseDouble(campoValor.getText().toString());
-
-        if (validarCamposDespesa()){
             movimentacao = new Movimentacao();
             movimentacao.setValor(valorRecuperado);
             movimentacao.setCategoria(campoCategoria.getText().toString());
@@ -69,7 +68,6 @@ public class DespesaActivity extends AppCompatActivity {
 
             finish();
         }
-
     }
 
     private boolean validarCamposDespesa() {
@@ -78,10 +76,22 @@ public class DespesaActivity extends AppCompatActivity {
         String textoCategoria = campoCategoria.getText().toString();
         String textoDescricao = campoDescricao.getText().toString();
 
-        if (!textoValor.isEmpty() || !textoData.isEmpty() || !textoCategoria.isEmpty() || !textoDescricao.isEmpty()) {
+        if (!textoValor.isEmpty() && !textoData.isEmpty() && !textoCategoria.isEmpty() && !textoDescricao.isEmpty()) {
             return true;
         } else {
-            Toast.makeText(DespesaActivity.this, "Todos os campos devem estar preenchidos!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DespesaActivity.this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+            if (textoValor.isEmpty()){
+                campoValor.setError("Preencha o campo");
+            }
+            if (textoData.isEmpty()){
+                campoData.setError("Preencha o campo");
+            }
+            if (textoCategoria.isEmpty()){
+                campoCategoria.setError("Preencha o campo");
+            }
+            if (textoDescricao.isEmpty()){
+                campoDescricao.setError("Preencha o campo");
+            }
             return false;
         }
     }
