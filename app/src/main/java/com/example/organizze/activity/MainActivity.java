@@ -80,6 +80,8 @@ public class MainActivity extends IntroActivity {
     }
 
     private void abrirTelaPrincipal(){
-        startActivity(new Intent(this, PrincipalActivity.class));
+        Intent intent = new Intent(this, PrincipalActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
